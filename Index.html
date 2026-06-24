@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Happy Birthday Felah</title>
+
+<style>
+body{
+    margin:0;
+    background:#111;
+    color:white;
+    font-family:Arial;
+    overflow:hidden;
+    text-align:center;
+}
+
+.screen{
+    display:none;
+    width:100vw;
+    height:100vh;
+}
+
+.active{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+.character{
+    width:180px;
+    margin:15px;
+    cursor:pointer;
+    animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.08);}
+    100%{transform:scale(1);}
+}
+
+#cake{
+    width:300px;
+    height:300px;
+    background:pink;
+    border-radius:20px;
+    margin-top:30px;
+}
+
+#fighter{
+    width:250px;
+}
+
+#message{
+    font-size:40px;
+    width:80%;
+}
+
+.confetti{
+    position:absolute;
+    width:10px;
+    height:10px;
+    background:red;
+    animation:fall 3s linear forwards;
+}
+
+@keyframes fall{
+    from{
+        transform:translateY(-50px);
+    }
+    to{
+        transform:translateY(100vh);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="s0" class="screen active">
+    <h1>Hatice has a gift for you.<br>Please accept the gift.</h1>
+    <p>Tap the screen</p>
+</div>
+
+<div id="s1" class="screen">
+    <h2>Choose Your Character</h2>
+
+    <img src="tanjiro.png" class="character" onclick="pick('tanjiro.png')">
+    <img src="levi.png" class="character" onclick="pick('levi.png')">
+    <img src="zoro.png" class="character" onclick="pick('zoro.png')">
+</div>
+
+<div id="s2" class="screen">
+    <h2>Tap the screen to cut the cake</h2>
+
+    <img id="fighter">
+    <div id="cake"></div>
+
+    <p id="count">0 / 20</p>
+</div>
+
+<div id="s3" class="screen">
+    <img id="finalCharacter" width="400">
+    <h1 id="message"></h1>
+</div>
+
+<audio id="sword" src="sword.mp3"></audio>
+<audio id="confettiSound" src="confetti.mp3"></audio>
+<audio id="typing" src="typing.mp3"></audio>
+
+<script>
+
+let chosen="";
+let cuts=0;
+
+document.getElementById("s0").onclick=()=>{
+    show("s1");
+}
+
+function show(id){
+    document.querySelectorAll(".screen").forEach(x=>{
+        x.classList.remove("active");
+    });
+
+    document.getElementById(id).classList.add("active");
+}
+
+function pick(img){
+
+    chosen=img;
+
+    document.getElementById("fighter").src=img;
+
+    show("s2");
+}
+
+document.getElementById("s2").onclick=function(){
+
+    if(cuts>=20) return;
+
+    cuts++;
+
+    document.getElementById("count").innerHTML=
+    cuts+" / 20";
+
+    document.getElementById("fighter").style.transform=
+    "rotate(-20deg)";
+
+    setTimeout(()=>{
+        document.getElementById("fighter").style.transform=
+        "rotate(0deg)";
+    },150);
+
+    document.getElementById("sword").play();
+
+    if(cuts==20){
+
+        document.getElementById("confettiSound").play();
+
+        for(let i=0;i<150;i++){
+
+            let c=document.createElement("div");
+
+            c.className="confetti";
+
+            c.style.left=Math.random()*100+"vw";
+
+            c.style.background=
+            "hsl("+Math.random()*360+",100%,50%)";
+
+            document.body.appendChild(c);
+        }
+
+        setTimeout(endScreen,3000);
+    }
+}
+
+function endScreen(){
+
+    show("s3");
+
+    document.getElementById("finalCharacter").src=chosen;
+
+    let text="Happy Birthday Dear Felah";
+
+    let i=0;
+
+    let timer=setInterval(()=>{
+
+        document.getElementById("message").innerHTML+=
+        text[i];
+
+        document.getElementById("typing").play();
+
+        i++;
+
+        if(i>=text.length){
+            clearInterval(timer);
+        }
+
+    },120);
+}
+
+</script>
+
+</body>
+</html>
